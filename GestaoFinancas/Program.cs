@@ -1,4 +1,6 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System.Globalization;
+using System.Reflection.Metadata.Ecma335;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GestaoFinancas
 {
@@ -6,12 +8,10 @@ namespace GestaoFinancas
     {
         static void Main(string[] args)
         {
-            // Armazenamento
             List<Conta> contas = new List<Conta>();
             List<Transacao> transacoes = new List<Transacao>();
 
             string opcao = "0";
-
             string menu = @"
 1 - Cadastrar nova conta
 2 - Cadastrar despesa
@@ -34,8 +34,6 @@ namespace GestaoFinancas
                 switch (opcao)
                 {
                     case "1":
-
-                        //  cadastrar conta
                         Console.WriteLine("Digite o nome da nova conta: ");
                         string nomeConta = Console.ReadLine();
                         Conta novaConta = new Conta(nomeConta);
@@ -46,10 +44,9 @@ namespace GestaoFinancas
                         break;
 
                     case "2":
-                        //despesa
                         if (contas.Count == 0)
                         {
-                            Console.WriteLine("Nenhuma conta foi cadastrada");
+                            Console.WriteLine("Nenhuma conta foi encontrada");
                             break;
                         }
                         Console.WriteLine("Escolha a conta que deseja:");
@@ -115,10 +112,9 @@ namespace GestaoFinancas
                         break;
 
                     case "3":
-                        // Receita
                         if (contas.Count == 0)
                         {
-                            Console.WriteLine("Nenhuma conta cadastrada.");
+                            Console.WriteLine("Nenhuma conta encontrada.");
                             break;
                         }
 
@@ -179,10 +175,9 @@ namespace GestaoFinancas
                         break;
 
                     case "4.1":
-                        // Exibir total
                         if (contas.Count == 0)
                         {
-                            Console.WriteLine("Nenhuma conta cadastrada.");
+                            Console.WriteLine("Nenhuma conta encontrada.");
                             break;
                         }
 
@@ -197,10 +192,9 @@ namespace GestaoFinancas
                         break;
 
                     case "4.2":
-                        // Exibir saldo
                         if (contas.Count == 0)
                         {
-                            Console.WriteLine("Nenhuma conta cadastrada");
+                            Console.WriteLine("Nenhuma conta encontrada");
                             break;
                         }
 
@@ -212,25 +206,23 @@ namespace GestaoFinancas
                         break;
 
                     case "5.1":
-                        //  todas transações
                         if (contas.Count == 0)
                         {
-                            Console.WriteLine("Nenhuma transação foi encontrada.");
+                            Console.WriteLine("Nenhuma conta foi encontrada.");
                             break;
                         }
                         Console.WriteLine("Lista de Transações:");
                         foreach (Transacao transacao in transacoes)
                         {
-                            Console.WriteLine($"");
+                            Console.WriteLine($"Nome:{transacao.Conta.Nome}, Tipo de transação:{transacao.Tipo}, Valor:R${transacao.Valor:F2}");
                         }
 
                         break;
 
                     case "5.2":
-                        // Listar receita
                         if (contas.Count == 0)
                         {
-                            Console.WriteLine("Nenhuma receita encontrada");
+                            Console.WriteLine("Nenhuma conta encontrada");
                         }
 
                         Console.WriteLine("Lista de Receitas:");
@@ -238,17 +230,17 @@ namespace GestaoFinancas
                         {
                             if (transacao.Tipo == TipoTransacao.Receita)
                             {
-                                Console.WriteLine(transacao);
+                                Console.WriteLine($"Nome:{transacao.Conta.Nome}, " + $"Valor:{transacao.Valor:F2}");
+                                
                             }
                         }
 
                         break;
 
                     case "5.3":
-                        // Listar apenas despesas
                         if (transacoes.Count == 0)
                         {
-                            Console.WriteLine("Nenhuma despesa encontrada");
+                            Console.WriteLine("Nenhuma conta encontrada");
                             break;
                         }
                         Console.WriteLine("Lista de despesas:");
@@ -256,13 +248,12 @@ namespace GestaoFinancas
                         {
                             if (transacao.Tipo == TipoTransacao.Despesa)
                             {
-                                Console.WriteLine(transacao);
+                                Console.WriteLine($"Nome:{transacao.Conta.Nome}, " + $"Valor:{transacao.Valor:F2}, " + $"Despesa:{transacao.Descricao}");
                             }
                         }
                         break;
 
                     case "6.1":
-                        // Listar transações por mês
                         Console.WriteLine("Digite o mes e ano: (MM/yyyy)");
                         DateTime mesAno;
                         if (!DateTime.TryParseExact(Console.ReadLine(), "MM/yyyy", null, System.Globalization.DateTimeStyles.None, out mesAno))
@@ -291,16 +282,15 @@ namespace GestaoFinancas
                         foreach (Transacao transacao in transacoesMes)
                         {
                             string tipo = transacao.Tipo == TipoTransacao.Receita ? "Receita" : "Despesa";
-                            Console.WriteLine($"{transacao.Data:dd/MM/yyyy} | " +
-                                $"{transacao.Conta.Nome} | " +
-                                $"{transacao.Descricao} | " +
-                                $"{tipo} | " +
+                            Console.WriteLine($"{transacao.Data:dd/MM/yyyy}, " +
+                                $"{transacao.Conta.Nome}, "  +
+                                $"{transacao.Descricao}, " +
+                                $"{tipo}, " +
                                 $"R$ {(transacao.Tipo == TipoTransacao.Receita ? "+" : "-")}{transacao.Valor:F2}");
                         }
                         break;
 
                     case "6.2":
-                        // Listar receitas por mês
                         Console.WriteLine("Digite o mês e ano (mm/yyyy)");
                         string receitasMes = Console.ReadLine();
 
@@ -344,14 +334,13 @@ namespace GestaoFinancas
 
                         foreach (Transacao transacao in receitasporMes)
                         {
-                            Console.WriteLine($"{transacao.Data:dd/MM/yyyy}  {transacao.Conta.Nome,-12}" +
-                                $"{transacao.Descricao,-23}    +R$ {transacao.Valor:F2}");
+                            Console.WriteLine($"Data:{transacao.Data:dd/MM/yyyy}  Nome:{transacao.Conta.Nome} " +
+                                $"Descrição:{transacao.Descricao}, R$ {transacao.Valor:F2}");
                         }
 
                         break;
 
                     case "6.3":
-                        // Despesas por mês
                         Console.WriteLine("Digite o mês e ano (mm/yyyy)");
                         string mesAnoDespesas = Console.ReadLine();
 
@@ -398,7 +387,7 @@ namespace GestaoFinancas
 
                         foreach (Transacao transacao in despesasMes)
                         {
-                            Console.WriteLine($"{transacao.Data:dd/MM/yyyy}  {transacao.Conta.Nome,-12} " + $"{transacao.Descricao,-23}  R$ {transacao.Valor:F2}");
+                            Console.WriteLine($"Data:{transacao.Data:dd/MM/yyyy},  {transacao.Conta.Nome}, " + $"Descrição:{transacao.Descricao}, Valor:R$ {transacao.Valor:F2}");
                         }
                         break;
 
